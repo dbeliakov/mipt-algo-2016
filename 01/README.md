@@ -2,3 +2,4 @@
 
 * [Слайды](https://dbeliakov.github.io/mipt-algo-2016/01/#/)
 * [Код вычисления интеграла](...)
+* Игра ["The Deadlock Empire"](http://deadlockempire.github.io)
