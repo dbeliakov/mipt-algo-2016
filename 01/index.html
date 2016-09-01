@@ -524,6 +524,81 @@ private:
 </script>
 </section>
 
+
+<section data-markdown>
+<script type="text/template">
+Разделим метод lock() на две секции, которые назовем **doorway**-секцией и **wait**-секцией и потребуем, чтобы doorway-секция всегда выполнялась за конечное число шагов, а секции ожидания позволим работать неопределенно долго. Интуиция за этими понятиями простая, пояснить ее можно на примере алгоритма Петерсона: сначала алгоритм заявляет о своем намерении захватить мьютекс, делая для этого несколько записей (установка флага и переменной victim), а затем крутится в ожидании.
+
+**Честность (fairness)** протокола взаимного исключения означает, что если поток A выполнил свою doorway-секцию до начала выполнения doorway-секции потока B, то A войдет в критическую секцию раньше B.
+</script>
+</section>
+
+<section>
+<div data-markdown>
+<script type="text/template">
+**Алгоритм Лампорта**
+</script>
+</div>
+
+<pre><code data-trim>
+class LamportMutex
+{
+public:
+    LamportMutex(int n) : want_(n), ticket_(n) {
+        init(n);
+    }
+
+    void lock(int t) {
+        chooseTicket(t);
+        waitInQueue(t);
+    }
+
+    void unlock(int t) {
+        want_[t].store(false);
+    }
+
+private:
+    // doorway section, finite number of steps
+    void chooseTicket(int t) {
+        want_[t].store(true);;
+        int maxTicket = 0;
+        for (int i = 0; i < ticket_.size(); ++i) {
+            maxTicket = std::max(maxTicket, ticket_[i].load());
+        }
+        ticket_[t].store(maxTicket + 1);
+    }
+
+    // wait section
+    void waitInQueue(int t) {
+        for (int i = 0; i < ticket_.size(); ++i) {
+            while (want_[i] && std::make_pair(ticket_[i].load(), i) < std::make_pair(ticket_[t].load(), t)) {
+                /* wait */
+            }
+        }
+    }
+
+    void init(int n) {
+        for (size_t i = 0; i < n; ++i) {
+            want_[i].store(false);
+            ticket_[i].store(0);
+        }
+    }
+
+    std::vector&lt;std::atomic&lt;bool&gt;&gt; want_;
+    std::vector&lt;std::atomic&lt;int&gt;&gt; ticket_;
+};
+</code></pre>
+</section>
+
+<section data-markdown>
+<script type="text/template">
+**Алгоритм Лампорта гарантирует:**
+* взаимное исключение
+* свободу от взаимной блокировки
+* честность
+</script>
+</section>
+
 </section>
 
             
