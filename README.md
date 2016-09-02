@@ -4,7 +4,7 @@
 * [Введение. Потоки в C++](01)
 
 Задания:
-* [К 16 сентября](https://contest.yandex.ru/contest/2688/enter/)
+* [К 16 сентября](https://official.contest.yandex.ru/contest/2688/enter/)
 
 Материалы по курсу:
 * TODO
