@@ -8,6 +8,7 @@
 
 Задания:
 * [К 16 сентября](https://official.contest.yandex.ru/contest/2688/enter/)
+* [К 23 сентября](https://official.contest.yandex.ru/contest/2742/enter/)
 
 Материалы по курсу:
 * TODO
