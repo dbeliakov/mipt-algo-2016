@@ -12,6 +12,8 @@
 * [К 23 сентября](https://official.contest.yandex.ru/contest/2742/enter/)
 
 Материалы по курсу:
-* TODO
+* [Эффективный и современный С++. 42 рекомендации по использованию C++11 и C++14](https://www.ozon.ru/context/detail/id/34747131/)
+* [Параллельное программирование на C++ в действии. Практика разработки многопоточных программ](https://books.google.ru/books/about/Параллельное_програм.html?id=1UXRAAAAQBAJ&redir_esc=y)
+* [Современные операционные системы](https://www.ozon.ru/context/detail/id/31649356/)
 
-[Таблица с оценками](...)
+[Таблица с оценками](https://docs.google.com/spreadsheets/d/1UbDcUcW40dZbepKQzy3VAdqV-GciJzjCfL2EOiIfKyI/edit?usp=sharing)
