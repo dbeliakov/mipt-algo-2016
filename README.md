@@ -17,3 +17,9 @@
 * [Современные операционные системы](https://www.ozon.ru/context/detail/id/31649356/)
 
 [Таблица с оценками](https://docs.google.com/spreadsheets/d/1UbDcUcW40dZbepKQzy3VAdqV-GciJzjCfL2EOiIfKyI/edit?usp=sharing)
+
+
+#### Преподаватели
+* Филипп Рухович (dprpavlin@gmail.com)
+* Егор Яковлев
+* Беляков Дмитрий (dmitriy.b11@gmail.com, [VK](https://vk.com/dmitriy_belyakov))
