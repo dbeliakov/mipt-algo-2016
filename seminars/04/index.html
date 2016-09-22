@@ -1,0 +1,457 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <title>Семинар 4 (23 сентября)</title>
+
+        <link rel="stylesheet" href="../../reveal/css/reveal.css">
+        <link rel="stylesheet" href="../../reveal/css/theme/solarized.css">
+
+        <!-- Theme used for syntax highlighting of code -->
+        <link rel="stylesheet" href="../../reveal/lib/css/zenburn.css">
+
+        <!-- Printing and PDF exports -->
+        <script>
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = window.location.search.match( /print-pdf/gi ) ? '../../reveal/css/print/pdf.css' : '../../reveal/css/print/paper.css';
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
+        <!-- MathJax config -->
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+        </script>
+
+        <style>
+            .reveal .slides {
+                text-align: left;
+            }
+            .reveal .slides section>* {
+                margin-left: 0;
+                margin-right: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+
+
+<!-- Slide -->
+<section data-markdown>
+<script type="text/template">
+## Параллельное программирование на C++
+
+Средства синхронизации в C++
+</script>
+</section>
+
+<!-- Slide -->
+<section data-markdown>
+<script type="text/template">
+### План
+
+* Мьютексы в C++
+* Объекты для безопасной работы с мьютексами
+* Условные переменные
+* Intercepted wakeup и Spurious wakeup
+* Пример: очередь
+* Семафоры
+</script>
+</section>
+
+<!-- Slide -->
+<section>
+
+<section data-markdown>
+<script type="text/template">
+### Мьютексы в C++
+</script>
+</section>
+
+<section data-markdown>
+<script type="text/template">
+###std::mutex
+
+Примитив синхронизации, который может использоваться для защиты разделяемых данных от одновременного доступа нескольких потоков.
+
+Методы:
+* lock
+* try_lock
+* unlock
+</script>
+</section>
+
+<section>
+<div data-markdown>
+<script type="text/template">
+Что будет, если попробовать захватить два раза мьютекс одним потоком?
+</script>
+</div>
+
+<pre><code data-trim>
+#include &lt;iostream&gt;
+#include &lt;mutex&gt;
+
+int main()
+{
+    std::mutex m;
+    m.lock();
+    std::cout << "1 lock" << std::endl;
+    m.lock();
+    std::cout << "2 lock" << std::endl;
+    m.unlock();
+    m.unlock();
+    return 0;
+}
+</code></pre>
+</section>
+
+<section>
+<div data-markdown>
+<script type="text/template">
+Чтобы успешно захватывать мьютекс из одного потока, существует std::recursive_mutex. Можно вызвать из одного потока несколько раз, мьютекс разблокируется при вызове столько же раз unlock.
+</script>
+</div>
+
+<pre><code data-trim>
+#include &lt;iostream&gt;
+#include &lt;mutex&gt;
+
+int main()
+{
+    std::mutex m;
+    m.lock();
+    std::cout << "1 lock" << std::endl;
+    m.lock();
+    std::cout << "2 lock" << std::endl;
+    m.unlock();
+    m.unlock();
+    return 0;
+}
+</code></pre>
+</section>
+
+<section data-markdown>
+<script type="text/template">
+###std::timed_mutex
+
+Помимо методов std::mutex:
+* try_lock_for
+* try_lock_until
+</script>
+</section>
+
+<section data-markdown>
+<script type="text/template">
+###std::shared_mutex (C++17)
+
+Примитив синхранизации, предоставляющий либо одновременный доступ (чаще всего для чтения объекта), либо эксклюзивный доступ (для модификации объекта). Также есть boost::shared_mutex
+
+Методы:
+* lock
+* try_lock
+* unlock
+* lock_shared
+* try_lock_shared
+* unlock_shared
+</script>
+</section>
+
+<section>
+<div data-markdown>
+<script type="text/template">
+std::shared_mutex позволяет получить существенный выигрыш при работе с объектами, из которых надо часто читать, и которые редко модифицируются (напр., DNS)
+</script>
+</div>
+
+<pre><code data-trim>
+int obj = 0;
+
+void get()
+{
+    m.shared_lock();
+    int tmp = obj;
+    m.shared_unlock();
+    return tmp;
+}
+
+void set(int val)
+{
+    m.lock();
+    obj = val;
+    m.unlock();
+}
+</code></pre>
+</section>
+
+</section>
+
+<!-- Slide -->
+<section>
+
+<section data-markdown>
+<script type="text/template">
+### Объекты для безопасной работы с мьютексами
+</script>
+</section>
+
+<section data-markdown>
+<script type="text/template">
+Мьютекс - это ресурс, который так же захватывается и освобождается. Так же, как и динамически выделенная память, ресурсы необходимо высвобождать в любой ситуации.
+</script>
+</section>
+
+<section data-markdown>
+<script type="text/template">
+### std::unique_lock
+
+* Конструкторы: по умолчанию (нет ассоциированного мьютекса), от мьютекса, от мьютекса с разными политиками захвата (std::defer_lock - не захватывать, std::try_to_lock - использует try_lock вместо lock, std::adopt_lock - допускает создание даже если текущий поток владеет мьютексом), конструкторы, использующие try_lock_for и try_lock_until (для timed_mutex)
+* В деструкторе если владеет мьютексом, то разблокирует его
+* lock, try_lock, unlock, try_lock_for, try_lock_until
+* owns_lock, operator bool - проверяет, владеет ли объект ассоциированным мьютексом
+</script>
+</section>
+
+<section data-markdown>
+<script type="text/template">
+### std::shared_lock
+
+Аналогично std::unique_lock, но используется для std::shared_mutex (std::shared_timed_mutex) для одновременного доступа к ресурсам.
+</script>
+</section>
+
+<section data-markdown>
+<script type="text/template">
+### std::lock_guard
+
+Простой объект, который использует RAII для захвата и освобождения мьютекса. Не предоставляет никаких методов кроме конструктора и деструктора.
+</script>
+</section>
+
+</section>
+
+<section>
+
+<section data-markdown>
+<script type="text/template">
+### Условные переменные и семафоры
+</script>
+</section>
+
+<section data-markdown>
+<script type="text/template">
+Пусть есть некоторая очередь. Мы хотим извлечь их этой очереди элемент в тот момент, когда она не пуста, иначе дождаться этого момента.
+
+* std::this_thread::sleep_for - скорее всего, проспим больше, чем надо
+* std::this_thread::yield - бессмысленное многократное переключение потоков
+</script>
+</section>
+
+<section data-markdown>
+<script type="text/template">
+Хочется примерно такого: чтобы поток заблокировался и не выполнялся, но был разбужен как только выполнилось нужное ему условие. Именно такую задачу и решают условные переменные (condition variables)
+
+Условные переменные (condition variables) - это механизм сигнализирования об изменении состояния разделяемого объекта
+</script>
+</section>
+
+<section data-markdown>
+<script type="text/template">
+Условная переменная ассоциирована с некоторым мьютексом. Кроме этого, с условной переменной связан некоторый предикат (но с точки зрения выполнения программы, не явно).
+
+Пусть есть некоторое условие (предикат), и поток, захвативший мьютекс, это условие проверяет (тестирует предикат).
+Если предикат выполняется, то поток просто делает свою работу. Если же предикат не выполняется, то поток должен уступить мьютекс и ждать до тех пор, пока условия не изменятся (в очереди не появятся элементы). Для этого поток вызывает метод cv.wait(lock) на связанной с предикатом условной переменной, где lock - это ссылка на std::unique_lock с захваченным мьютексом внутри.
+</script>
+</section>
+
+<section data-markdown>
+<script type="text/template">
+Метод wait атомарно освобождает мьютекс, которым владел поток, и помещает поток в очередь ожидания (сигнала) на условной переменной, блокируя его до получения сигнала от другого потока (или до spurious wakeup, или до наступления таймаута в timed-версии wait). При возврате из wait мьютекс захватывается обратно.
+
+Важно, что теперь (после того, как поток перешел в ожидание) другие потоки могут захватывать мьютекс и делать полезную работу.
+</script>
+</section>
+
+<section data-markdown>
+<script type="text/template">
+Сигнализировать о выполнении предиката можно двумя способами: notify_one() и notify_all(), две эти операции также называют signal и broadcast соответственно. Метод notify_one (signal) будит один произвольный поток из ждущих в методе wait, а notify_all (broadcast) - все потоки в методе wait.
+
+Условные переменные сами по себе не имеют состояния (stateless): если сигнал от другого потока был отправлен в тот момент, когда ни один из потоков не находился внутри cv.wait(lock), то этот сигнал будет пропущен.
+</script>
+</section>
+
+<section data-markdown>
+<script type="text/template">
+Важно, что метод cv.wait(lock) атомарно освобождает мьютекс и ставит поток в ожидание на условной переменной. Если бы эти действия выполнялись одно после другого, то была бы возможна гонка: после освобождения мьютекса и перед началом ожидания мог запуститься какой-нибудь другой поток, который бы захватил мьютекс, изменил состояние и просигнализировал о нем (первый поток еще не начал ждать сигнала), после чего первый поток перешел бы в ожидание и ждал бы вечно.
+</script>
+</section>
+
+<section data-markdown>
+<script type="text/template">
+### std::condition_variable
+
+Методы:
+* wait 
+* wait_for 
+* wait_until 
+* notify_one 
+* notify_all 
+</script>
+</section>
+
+</section>
+
+
+<!-- Slide -->
+<section>
+
+<section data-markdown>
+<script type="text/template">
+### Intercepted wakeup и Spurious wakeup
+</script>
+</section>
+
+<section data-markdown>
+<script type="text/template">
+После пробуждения из cv.wait(lock) поток обязан повторно протестировать предикат, т.к. предикат может не выполняться, даже если другой поток отправил сигнал через notify-метод.
+</script>
+</section>
+
+<section data-markdown>
+<script type="text/template">
+###Intercepted wakeup
+
+Пример: очередь
+
+В момент, когда cv получает сигнал, владение не обязательно перейдет потоку, который на ней висит в wait. Может так случиться, что доступ получит другой поток, а первый останется ни с чем.
+
+</script>
+</section>
+
+<section data-markdown>
+<script type="text/template">
+###Spurious wakeup
+
+Вообще говоря, вызов cv.wait(lock) может вернуть управление, даже если ни один поток не вызвал cv.notify_one() или cv.notify_all(). Такое поведение обусловлено реализацией условных переменных в конкретной операционной системе и лежит за границами данного повествования. Главное, что такие ситуации очень редки и в реальной жизни не могут сказаться на производительности программ.
+</script>
+</section>
+
+<section>
+<div data-markdown>
+<script type="text/template">
+По приведенным выше причинам проверку предиката и ожидание на условной переменной необходимо оборачивать в цикл:
+</script></div> 
+
+<pre><code data-trim>
+while (!condition(data)) {
+    cv.wait(lock);
+}
+</code></pre>
+
+<div data-markdown>
+<script type="text/template">
+В интерфейсе std::condition_variable есть специальный вариант wait, который инкапсулирует в себе этот цикл: cv.wait(lock, pred), где pred - это функциональный объект, представляющий собой предикат, выполнения которого ожидает поток.
+</script></div> 
+
+</script>
+</section>
+
+<section data-markdown>
+<script type="text/template">
+Нужно ли сигналить с захваченным мьютексом или уже вне критической секции?
+
+Если сигналить под мьютексом, то можем разбудить поток, ожидающий в методе cv.wait(lock), который не сможет захватить мьютекс, который занят сигнализирующим потоком, так что разбуженный поток снова заблокируется на захвате мьютекса. Итого, имеем лишнюю нагрузку на планировщик и затраты на бесполезное переключение контекста.
+</script>
+</section>
+
+<section data-markdown>
+<script type="text/template">
+С другой стороны, в современных операционных системах часто реализована оптимизация wait morphing: при получении сигнала на условной переменной поток не пробуждается, а переносится в очередь потоков для мьютекса, связанного с этой переменной.
+
+Если же сигналить после освобождения мьютекса, то можно повысить вероятность intercepted wakeup-а, т.е. тоже получить бесполезное пробуждение.
+</script>
+</section>
+
+<section data-markdown>
+<script type="text/template">
+С несколько условных переменных может быть связано с одним мьютексом. Мьютекс отвечает за доступ к данным, в то время как cv отвечает за ожидание и пробуждение.
+
+Пример: очередь ограниченного размера
+</script>
+</section>
+
+</section>
+
+<section>
+
+<section data-markdown>
+<script type="text/template">
+### Семафоры
+</script>
+</section>
+
+<section data-markdown>
+<script type="text/template">
+Семафоры были придуманы в 60-х годах еще до появления многопроцессорных компьютеров знаменитым Эдсгером Дейкстрой, который известен студентам алгоритмом поиска кратчаших путей, а программистам - статьей о вреде оператора безусловного перехода goto.
+
+У семафора, в отличие от условной переменной, есть состояние - целочисленный счетчик с начальным значением n >= 0. Семафор поддерживает две атомарные операции: одну из них назовем wait(), другую - post().
+</script>
+</section>
+
+<section data-markdown>
+<script type="text/template">
+Вызов wait уменьшает счетчик на 1, и если значение становится отрицательным, то поток блокируется.
+
+Вызов post увеличивает значение счетчика на 1, и будет один из заблокированных в wait потоков, если такие вообще есть. Блокировки при вызове post никогда не происходит.
+</script>
+</section>
+
+<section data-markdown>
+<script type="text/template">
+В случае условных переменных сигнал доходил до другого потока только если тот был в методе wait, а в противном случае терялся. Для семафоров порядок вызовов wait и post ни на что не влияет, поскольку семафор подсчитывает число поступивших сигналов во внутреннем счетчике и никогда не теряет их.
+
+Если на семафоре с нулевым счетчиком n раз вызвали post() и m > n раз вызвали wait(), то ровно n потоков получат управление из метода wait(), причем совершенно не важно, в каком порядке все эти методы вызывались.
+</script>
+</section>
+
+<section data-markdown>
+<script type="text/template">
+К сожалению, в C++11/14/17 нет семафоров, но их можно написать самим :)
+</script>
+</section>
+
+</section>
+
+            
+            </div>
+        </div>
+
+        <script src="../../reveal/lib/js/head.min.js"></script>
+        <script src="../../reveal/js/reveal.js"></script>
+
+        <script>
+            // More info https://github.com/hakimel/reveal.js#configuration
+            Reveal.initialize({
+                history: true,
+
+                math: {
+                    mathjax: 'https://cdn.mathjax.org/mathjax/latest/MathJax.js',
+                    config: 'TeX-AMS_HTML-full'  // See http://docs.mathjax.org/en/latest/config-files.html
+                },
+
+                // More info https://github.com/hakimel/reveal.js#dependencies
+                dependencies: [
+                    { src: '../../reveal/plugin/markdown/marked.js' },
+                    { src: '../../reveal/plugin/markdown/markdown.js' },
+                    { src: '../../reveal/plugin/notes/notes.js', async: true },
+                    { src: '../../reveal/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+                    { src: '../../reveal/plugin/math/math.js', async: true }
+                ]
+            });
+        </script>
+    </body>
+</html>
