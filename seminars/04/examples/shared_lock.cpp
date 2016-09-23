@@ -11,6 +11,7 @@ public:
     Val get(const Key& k)
     {
         std::shared_lock<std::shared_mutex> lock(m_);
+        //return map_[k]; BAD WAY
         auto it = map_.find(k);
         if (it == map_.end()) {
             throw std::exception(); // TODO
