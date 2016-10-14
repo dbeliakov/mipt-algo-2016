@@ -11,12 +11,14 @@
 * Потоки, поиск паросочетаний в графе
 * Максимальное независимое множество и минимальное покрывающее множество. Алгоритм Хопкрофта - Карпа
 * [Средства синхронизации в C++](seminars/04)
+* [Дэдлоки](seminars/03-deadlocks.pptx)
 
 #### Задания:
 * [К 16 сентября](https://official.contest.yandex.ru/contest/2688/enter/)
 * [К 23 сентября](https://official.contest.yandex.ru/contest/2742/enter/)
 * [К 7 октября](https://official.contest.yandex.ru/contest/2831/enter/)
 * [К 14 октября](https://official.contest.yandex.ru/contest/2832/enter/)
+* [К 5 ноября](https://official.contest.yandex.ru/contest/2952/enter/)
 
 #### Материалы по курсу:
 * [Эффективный и современный С++. 42 рекомендации по использованию C++11 и C++14](https://www.ozon.ru/context/detail/id/34747131/)
