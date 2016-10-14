@@ -3,6 +3,8 @@
 #### Лекции:
 * [Потоки: введение](lections/01/)
 * [Алгоритм Эдмондса – Карпа. Блокирующие потоки](lections/02/)
+* [Потоки в целочисленных сетях. Проталкивание предпотока](lections/03/)
+* [Проталкивание предпотока](lections/04/)
 
 #### Семинары:
 * [Введение. Потоки в C++](seminars/01/)
@@ -14,6 +16,7 @@
 * [К 16 сентября](https://official.contest.yandex.ru/contest/2688/enter/)
 * [К 23 сентября](https://official.contest.yandex.ru/contest/2742/enter/)
 * [К 7 октября](https://official.contest.yandex.ru/contest/2831/enter/)
+* [К 14 октября](https://official.contest.yandex.ru/contest/2832/enter/)
 
 #### Материалы по курсу:
 * [Эффективный и современный С++. 42 рекомендации по использованию C++11 и C++14](https://www.ozon.ru/context/detail/id/34747131/)
