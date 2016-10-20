@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <title>Семинар 8 (21 октября)</title>
+
+        <link rel="stylesheet" href="../../reveal/css/reveal.css">
+        <link rel="stylesheet" href="../../reveal/css/theme/solarized.css">
+
+        <!-- Theme used for syntax highlighting of code -->
+        <link rel="stylesheet" href="../../reveal/lib/css/zenburn.css">
+
+        <!-- Printing and PDF exports -->
+        <script>
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = window.location.search.match( /print-pdf/gi ) ? '../../reveal/css/print/pdf.css' : '../../reveal/css/print/paper.css';
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
+        <!-- MathJax config -->
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+        </script>
+
+        <style>
+            .reveal .slides {
+                text-align: left;
+            }
+            .reveal .slides section>* {
+                margin-left: 0;
+                margin-right: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+
+
+<section data-markdown="slides.md"  
+         data-separator="^\n\n"  
+         data-separator-vertical="^\n\n\n"
+         data-separator-notes="^Note:"
+         data-charset="utf-8">
+</section>
+            
+            </div>
+        </div>
+
+        <script src="../../reveal/lib/js/head.min.js"></script>
+        <script src="../../reveal/js/reveal.js"></script>
+
+        <script>
+            // More info https://github.com/hakimel/reveal.js#configuration
+            Reveal.initialize({
+                history: true,
+
+                math: {
+                    mathjax: 'https://cdn.mathjax.org/mathjax/latest/MathJax.js',
+                    config: 'TeX-AMS_HTML-full'  // See http://docs.mathjax.org/en/latest/config-files.html
+                },
+
+                // More info https://github.com/hakimel/reveal.js#dependencies
+                dependencies: [
+                    { src: '../../reveal/plugin/markdown/marked.js' },
+                    { src: '../../reveal/plugin/markdown/markdown.js' },
+                    { src: '../../reveal/plugin/notes/notes.js', async: true },
+                    { src: '../../reveal/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+                    { src: '../../reveal/plugin/math/math.js', async: true }
+                ]
+            });
+        </script>
+    </body>
+</html>
