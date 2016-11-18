@@ -13,6 +13,7 @@
 * [Средства синхронизации в C++](seminars/04)
 * [Дэдлоки](seminars/03-deadlocks.pptx)
 * [Мелко-гранулярные блокировки. RW-мьютекс](seminars/08)
+* [Неблокирующая синхронизация](seminars/11)
 
 #### Задания:
 * [К 16 сентября](https://official.contest.yandex.ru/contest/2688/enter/)
@@ -26,6 +27,7 @@
 * [Параллельное программирование на C++ в действии. Практика разработки многопоточных программ](https://books.google.ru/books/about/Параллельное_програм.html?id=1UXRAAAAQBAJ&redir_esc=y)
 * [The art of multiprocessor programming](http://rutracker.org/forum/viewtopic.php?t=3135979)
 * [Современные операционные системы](https://www.ozon.ru/context/detail/id/31649356/)
+* [Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms](seminars/11/podc-1996.pdf)
 
 [Таблица с оценками](https://docs.google.com/spreadsheets/d/1UbDcUcW40dZbepKQzy3VAdqV-GciJzjCfL2EOiIfKyI/edit?usp=sharing)
 
