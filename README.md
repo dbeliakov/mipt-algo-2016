@@ -17,6 +17,9 @@
 * [Мелко-гранулярные блокировки. RW-мьютекс](seminars/08)
 * [Неблокирующая синхронизация](seminars/11)
 
+#### Семинары 2 семестр:
+* [Ассемблер](seminars/14)
+
 #### Задания:
 * [К 16 сентября](https://official.contest.yandex.ru/contest/2688/enter/)
 * [К 23 сентября](https://official.contest.yandex.ru/contest/2742/enter/)
