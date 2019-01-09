@@ -38,6 +38,6 @@
 [Таблица с оценками](https://docs.google.com/spreadsheets/d/1UbDcUcW40dZbepKQzy3VAdqV-GciJzjCfL2EOiIfKyI/edit?usp=sharing)
 
 #### Преподаватели
-* Филипп Рухович (dprpavlin@gmail.com)
+* Филипп Рухович
 * Егор Яковлев
-* Дмитрий Беляков (dmitriy.b11@gmail.com, [VK](https://vk.com/dmitriy_belyakov))
+* Дмитрий Беляков
